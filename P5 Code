@@ -1,0 +1,125 @@
+let serial;
+let latestData = "waiting for data";
+
+let inString;
+let pot = 0;
+let pot2 = 0;
+let button = 0;
+
+function setup() {
+ createCanvas(windowWidth, windowHeight);
+
+ serial = new p5.SerialPort();
+
+ serial.list();
+ serial.open('Com3');
+
+ serial.on('connected', serverConnected);
+
+ serial.on('list', gotList);
+
+ serial.on('data', gotData);
+
+ serial.on('error', gotError);
+
+ serial.on('open', gotOpen);
+
+ serial.on('close', gotClose);
+}
+
+function serverConnected() {
+ print("Connected to Server");
+}
+
+function gotList(thelist) {
+ //print("List of Serial Ports:");
+
+ for (let i = 0; i < thelist.length; i++) {
+  //print(i + " " + thelist[i]);
+ }
+}
+
+function gotOpen() {
+ print("Serial Port is Open");
+}
+
+function gotClose(){
+ print("Serial Port is Closed");
+ latestData = "Serial Port is Closed";
+}
+
+function gotError(theerror) {
+ print(theerror);
+}
+
+function gotData() {
+  inString = serial.readLine();
+
+  if(inString.length > 0){
+    let sensors = split(inString, ",");
+   
+    pot = Number(sensors[0]);
+    pot2 = Number(sensors[1]);
+    button = Number(sensors[2]);
+  } 
+
+}
+
+function draw() {
+if(button == 1)
+    {
+      background("Grey")
+    }
+  
+ if(button == 0)
+    {
+      background("LightBlue");
+    }
+  
+   fill("LightGrey");
+ 
+  //creates buildings
+  rect(160, 160, pot, pot2);
+  rect(500, 100, pot, pot2);
+  rect(70, 500, pot, pot2);
+  rect(560, 440, pot, pot2);
+  rect(325, 300, pot, pot2);
+  rect(0, 200, pot, pot2);
+  
+  if(button == 1)
+    {
+      //creates rain
+      var circleX = random(width);
+      var circleY = random(height);
+      var circleSize = random(10, 200);
+      fill("CornflowerBlue");
+  
+      ellipse(circleX, circleY, circleSize);
+      
+      //creates clouds
+      fill("white");
+      ellipse(56, 46, 60, 60);
+      ellipse(96, 46, 60, 60);
+      ellipse(136, 46, 60, 60);
+          
+      ellipse(306, 120, 60, 60);
+      ellipse(346, 120, 60, 60);
+      ellipse(386, 120, 60, 60);
+    }
+  
+  if(button == 0)
+    {
+      //creates the sun
+      fill("yellow");
+      ellipse(56, 46, 60, 60);
+    }
+
+}
+
+//if a key is typed, send that key to Arduino and turn led on/off
+function keyTyped(){
+  if(key === 'h' || key === 'l'){
+    serial.write(key);
+    console.log(key);
+  }
+}
