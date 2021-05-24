@@ -1,0 +1,43 @@
+int potPin = A0; //analog
+//int slidePin = A2; //analog
+int pot2Pin = A2;
+int buttonPin = 2;
+int LEDPin = 3;
+int incomingByte;
+
+void setup() {
+  // put your setup code here, to run once:
+  Serial.begin(9600);
+  pinMode(LEDPin, OUTPUT);
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  int potVal = analogRead(potPin);
+  int pot2Val = analogRead(pot2Pin);
+  //int slideVal = analogRead(slidePin);
+  int buttonVal = digitalRead(buttonPin);
+
+//Sends sensor values to P5
+  Serial.print(potVal);
+  Serial.print(",");
+  Serial.print(pot2Val);
+  //Serial.print(slideVal);
+  Serial.print(",");
+  Serial.println(buttonVal);
+
+//listen for incoming data
+//if there is incoming data, read it
+  if(Serial.available() > 0)
+  {
+    incomingByte = Serial.read();
+    if(incomingByte == 'h')
+    {
+       digitalWrite(3, HIGH);
+    }
+    if(incomingByte == 'l')
+    {
+      digitalWrite(3, LOW);
+    }
+  }
+}
